@@ -250,15 +250,16 @@ export default function ChallengeDetails() {
                         </div>
                     </div>
                 )}
-            </div>
-
-            <div className="flex flex-col gap-8">
-                <div>
+                <div className="mt-8">
                     <h2 className="font-display text-sm font-semibold text-ink50 mb-6">
                         Progress
                     </h2>
                     <Timeline status={challenge.status} />
                 </div>
+            </div>
+
+            <div className="flex flex-col gap-8">
+                
 
                 {challenge.recommendedUniversities?.length > 0 && (
                     <div className="bg-panel border border-panelLight rounded-lg p-6">

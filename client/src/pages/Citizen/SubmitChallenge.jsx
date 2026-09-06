@@ -188,6 +188,7 @@ export default function SubmitChallenge() {
             <Input
               label="Location"
               name="location"
+              required= "Area is required"
               value={form.location}
               onChange={handleChange}
               placeholder="e.g. Village X, near the main canal"
@@ -216,6 +217,7 @@ export default function SubmitChallenge() {
             <Input
               label="People affected"
               name="peopleAffected"
+              required="True"
               type="number"
               value={form.peopleAffected}
               onChange={handleChange}
