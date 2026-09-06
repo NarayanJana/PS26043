@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { LayoutDashboard, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, ShieldCheck, Compass } from 'lucide-react';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import StatCard from '../../components/common/StatCard';
 import BarChartCard from '../../components/common/BarChartCard';
@@ -17,7 +17,10 @@ import { getCategories } from '../../services/categoryService';
 import { DOMAINS } from '../../utils/constants';
 import { getStatusLabel } from '../../utils/statusUtils';
 
-const navItems = [{ to: '/government/dashboard', label: 'nav.dashboard', icon: LayoutDashboard }];
+const navItems = [
+  { to: '/government/dashboard', label: 'nav.dashboard', icon: LayoutDashboard },
+  { to: '/challenges', label: 'nav.exploreChallenges', icon: Compass },
+];
 
 const initialFilters = { district: '', domain: '', status: '', dateFrom: '' };
 

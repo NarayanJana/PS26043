@@ -1,4 +1,4 @@
-// Deterministic priority scoring — the LLM extracts keywords,
+// Deterministic =ity scoring — the LLM extracts keywords,
 // but the actual priority number comes from this formula instead
 // of the model's own judgment (small models default to "High" too often).
 

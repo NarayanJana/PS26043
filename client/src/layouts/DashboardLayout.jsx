@@ -179,11 +179,10 @@ export default function DashboardLayout({ navItems, children }) {
               key={item.to}
               to={item.to}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${
-                active
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${active
                   ? 'bg-signal/10 text-signal'
                   : 'text-inkMuted hover:text-ink50 hover:bg-panelLight'
-              }`}
+                }`}
             >
               <item.icon size={18} />
               {t(item.label)}
@@ -273,6 +272,15 @@ export default function DashboardLayout({ navItems, children }) {
                       {user?.role}
                     </p>
                   </div>
+
+                  {/* Settings */}
+                  <Link
+                    to="/settings"
+                    onClick={() => setProfileOpen(false)}
+                    className="w-full flex items-center gap-2 px-4 py-3 text-sm text-inkMuted hover:text-ink50 hover:bg-panelLight transition-colors"
+                  >
+                    Settings
+                  </Link>
 
                   {/* Logout */}
                   <button
