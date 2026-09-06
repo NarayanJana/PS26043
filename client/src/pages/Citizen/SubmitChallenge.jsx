@@ -10,9 +10,9 @@ import { getCategories } from '../../services/categoryService';
 import { DOMAINS } from '../../utils/constants';
 
 const navItems = [
-  { to: '/citizen/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/citizen/submit-challenge', label: 'Submit challenge', icon: FilePlus },
-  { to: '/challenges', label: 'Explore challenges', icon: Compass },
+  { to: '/citizen/dashboard', label: 'nav.dashboard', icon: LayoutDashboard },
+  { to: '/citizen/submit-challenge', label: 'nav.submitChallenge', icon: FilePlus },
+  { to: '/challenges', label: 'nav.exploreChallenges', icon: Compass },
 ];
 
 export default function SubmitChallenge() {

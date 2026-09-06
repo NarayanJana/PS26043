@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { GitBranch, LogOut, Menu, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { GitBranch, LogOut, Menu, X, Settings as SettingsIcon } from 'lucide-react';
 import { logout } from '../store/slices/authSlice';
 import NotificationBell from '../components/common/NotificationBell';
 
@@ -11,6 +12,7 @@ export default function DashboardLayout({ navItems, children }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     dispatch(logout());
@@ -22,7 +24,7 @@ export default function DashboardLayout({ navItems, children }) {
       <div className="h-16 flex items-center justify-between px-6 border-b border-panelLight">
         <div className="flex items-center gap-2">
           <GitBranch size={18} className="text-signal" />
-          <span className="font-display font-semibold text-ink50">Setu</span>
+          <span className="font-display font-semibold text-ink50">SocioSolve</span>
         </div>
         <button
           className="lg:hidden text-inkMuted"
@@ -48,7 +50,7 @@ export default function DashboardLayout({ navItems, children }) {
               }`}
             >
               <item.icon size={18} />
-              {item.label}
+              {t(item.label)}
             </Link>
           );
         })}
@@ -62,7 +64,7 @@ export default function DashboardLayout({ navItems, children }) {
           className="flex items-center gap-2 text-sm text-inkMuted hover:text-red-400 transition-colors"
         >
           <LogOut size={16} />
-          Log out
+          {t('nav.logout')}
         </button>
       </div>
     </>
@@ -70,12 +72,10 @@ export default function DashboardLayout({ navItems, children }) {
 
   return (
     <div className="min-h-screen bg-ink flex">
-      {/* Desktop sidebar — always visible at lg breakpoint and above */}
       <aside className="hidden lg:flex w-64 bg-panel border-r border-panelLight flex-col shrink-0">
         {sidebarContent}
       </aside>
 
-      {/* Mobile sidebar — slides in as an overlay, closed by default */}
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-40 flex">
           <div
@@ -98,7 +98,18 @@ export default function DashboardLayout({ navItems, children }) {
             <Menu size={22} />
           </button>
           <div className="hidden lg:block" />
-          <NotificationBell />
+          <div className="flex items-center gap-1">
+            <Link
+              to="/settings"
+              className={`p-2 rounded-md hover:bg-panelLight transition-colors ${
+                location.pathname === '/settings' ? 'text-signal' : 'text-inkMuted'
+              }`}
+              aria-label={t('nav.settings')}
+            >
+              <SettingsIcon size={18} />
+            </Link>
+            <NotificationBell />
+          </div>
         </div>
         {children}
       </main>

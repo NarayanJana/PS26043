@@ -17,7 +17,7 @@ import { getCategories } from '../../services/categoryService';
 import { DOMAINS } from '../../utils/constants';
 import { getStatusLabel } from '../../utils/statusUtils';
 
-const navItems = [{ to: '/government/dashboard', label: 'Dashboard', icon: LayoutDashboard }];
+const navItems = [{ to: '/government/dashboard', label: 'nav.dashboard', icon: LayoutDashboard }];
 
 const initialFilters = { district: '', domain: '', status: '', dateFrom: '' };
 

@@ -14,15 +14,61 @@
   --font-mono: "JetBrains Mono", monospace;
 }
 
+/* Light theme override — same variable names, different values.
+   Deliberately NOT wrapped in @layer, so it stays unlayered and always
+   wins over Tailwind's own @theme layer regardless of selector
+   specificity. This is what lets every existing bg-ink / text-signal /
+   border-panelLight class across the whole app repaint correctly
+   without touching any component. */
+:root[data-theme='light'] {
+  --color-ink: #F7F8FA;
+  --color-panel: #FFFFFF;
+  --color-panelLight: #E5E9F0;
+  --color-signal: #B45309;
+  --color-pulse: #0F9488;
+  --color-ink50: #0B1220;
+  --color-inkMuted: #5B6B85;
+}
+
 body {
   margin: 0;
-  background-color: #0B1220;
-  color: #E8ECF4;
+  background-color: var(--color-ink);
+  color: var(--color-ink50);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 ::selection {
-  background-color: #F5A623;
-  color: #0B1220;
+  background-color: var(--color-signal);
+  color: var(--color-ink);
+}
+
+/* Accessibility: text size — scales root font-size, which cascades into
+   every rem-based Tailwind text-* utility across the whole app. */
+html[data-font-size='small'] { font-size: 87.5%; }
+html[data-font-size='medium'] { font-size: 100%; }
+html[data-font-size='large'] { font-size: 112.5%; }
+html[data-font-size='xlarge'] { font-size: 125%; }
+
+/* Accessibility: reduced motion — collapses all transitions/animations
+   app-wide to effectively instant. */
+html[data-reduce-motion='true'] *,
+html[data-reduce-motion='true'] *::before,
+html[data-reduce-motion='true'] *::after {
+  transition-duration: 0.001ms !important;
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+}
+
+/* Accessibility: high contrast — same variable-override trick as the
+   light/dark theme, just widening the gap between text/border colors
+   and the background for better legibility. */
+html[data-contrast='high'] {
+  --color-inkMuted: #C7D0E0;
+  --color-panelLight: #2A3B5C;
+}
+html[data-theme='light'][data-contrast='high'] {
+  --color-inkMuted: #33415C;
+  --color-panelLight: #C4CEDD;
 }

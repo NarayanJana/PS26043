@@ -8,7 +8,7 @@ import Button from '../../components/common/Button';
 import { getUniversityDashboard } from '../../services/universityService';
 import { acceptChallenge, rejectChallenge } from '../../services/challengeService';
 
-const navItems = [{ to: '/university/dashboard', label: 'Dashboard', icon: LayoutDashboard }];
+const navItems = [{ to: '/university/dashboard', label: 'nav.dashboard', icon: LayoutDashboard }];
 
 export default function UniversityDashboard() {
   const [data, setData] = useState(null);

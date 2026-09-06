@@ -165,7 +165,7 @@ const getChallenges = async (req, res) => {
 const getChallengeById = async (req, res) => {
     try {
         const challenge = await Challenge.findById(req.params.id)
-            .populate('submittedBy', 'name email')
+            .populate('submittedBy', 'name email settings')
             .populate('assignedUniversity')
             .populate('recommendedUniversities.university')
             .populate('similarChallenges.challenge', 'title district status')
@@ -176,6 +176,23 @@ const getChallengeById = async (req, res) => {
 
         if (!challenge) {
             return res.status(404).json({ message: 'Challenge not found' });
+        }
+
+        // Respect the submitter's own privacy settings for anyone viewing this
+        // challenge who isn't the submitter or a government/admin account
+        // (who need real identity for validation/oversight).
+        const isOwner = challenge.submittedBy?._id?.toString() === req.user._id.toString();
+        const isPrivileged = ['government', 'admin'].includes(req.user.role);
+
+        if (challenge.submittedBy && !isOwner && !isPrivileged) {
+            const privacy = challenge.submittedBy.settings?.privacy;
+            if (privacy?.profileVisibility === 'anonymous') {
+                challenge.submittedBy.name = 'Anonymous Citizen';
+            }
+            if (privacy?.showContactInfo === false) {
+                challenge.submittedBy.email = undefined;
+            }
+            challenge.submittedBy.settings = undefined; // never leak the raw object itself
         }
 
         res.status(200).json({ challenge });

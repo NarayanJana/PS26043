@@ -23,6 +23,14 @@ const authSlice = createSlice({
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', token);
     },
+    // For updates that only change user fields (e.g. editing a profile)
+    // and don't issue a new token — merges onto the existing user rather
+    // than replacing it outright, so fields the update didn't touch
+    // (like role) are preserved.
+    updateUser: (state, action) => {
+      state.user = { ...state.user, ...action.payload };
+      localStorage.setItem('user', JSON.stringify(state.user));
+    },
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -33,5 +41,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, updateUser, logout } = authSlice.actions;
 export default authSlice.reducer;

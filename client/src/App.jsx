@@ -17,6 +17,7 @@ import AdminUniversities from './pages/Admin/AdminUniversities';
 import AdminIndustries from './pages/Admin/AdminIndustries';
 import AdminChallenges from './pages/Admin/AdminChallenges';
 import AdminCategories from './pages/Admin/AdminCategories';
+import Settings from './pages/Settings/Settings';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './routes/ProtectedRoute';
 import DashboardRedirect from './routes/DashboardRedirect';
@@ -95,6 +96,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/industry/dashboard"
         element={
@@ -103,6 +105,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/government/dashboard"
         element={
@@ -111,6 +114,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/admin/dashboard"
         element={
@@ -160,9 +164,17 @@ function App() {
         }
       />
 
-      <Route path="*" element={<NotFound />} />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
 
-    </Routes >
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 

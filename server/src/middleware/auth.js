@@ -23,6 +23,16 @@ const protect = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized, user not found' });
     }
 
+    // decoded.tokenVersion is undefined for tokens issued before this field
+    // existed — treated as 0, matching the schema default, so this change
+    // doesn't force-log-out every existing session the moment it ships.
+    const tokenVersion = decoded.tokenVersion || 0;
+    if (tokenVersion !== (req.user.tokenVersion || 0)) {
+      return res
+        .status(401)
+        .json({ message: 'Session has been invalidated. Please log in again.' });
+    }
+
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Not authorized, token failed' });

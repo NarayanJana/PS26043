@@ -48,7 +48,7 @@ const register = async (req, res) => {
                 contactPhone: user.phone,
             });
         }
-        const token = generateToken(user._id, user.role);
+        const token = generateToken(user._id, user.role, user.tokenVersion);
 
         res.status(201).json({
             token,
@@ -78,7 +78,11 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        const token = generateToken(user._id, user.role);
+        if (!user.isActive) {
+            return res.status(403).json({ message: 'This account has been deactivated.' });
+        }
+
+        const token = generateToken(user._id, user.role, user.tokenVersion);
 
         res.status(200).json({
             token,

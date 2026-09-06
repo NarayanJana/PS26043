@@ -30,15 +30,30 @@ const userSchema = new mongoose.Schema(
       contactPerson: { type: String, trim: true },
     },
     isActive: { type: Boolean, default: true },
+    tokenVersion: { type: Number, default: 0 },
+
+    settings: {
+      notifications: {
+        challengeUpdates: { type: Boolean, default: true },
+        projectUpdates: { type: Boolean, default: true },
+        collaborationRequests: { type: Boolean, default: true },
+        systemNotifications: { type: Boolean, default: true },
+        emailNotifications: { type: Boolean, default: false },
+      },
+      privacy: {
+        profileVisibility: { type: String, enum: ['public', 'anonymous'], default: 'public' },
+        showContactInfo: { type: Boolean, default: true },
+      },
+    },
   },
   { timestamps: true }
 );
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  //next();
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {

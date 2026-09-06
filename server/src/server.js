@@ -21,6 +21,7 @@ const industryRoutes = require('./routes/industryRoutes');
 const governmentRoutes = require('./routes/governmentRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 connectDB();
 
@@ -68,6 +69,7 @@ app.use('/api/industry', industryRoutes);
 app.use('/api/government', governmentRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

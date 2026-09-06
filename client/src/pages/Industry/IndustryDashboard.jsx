@@ -11,7 +11,7 @@ import {
 } from '../../services/industryService';
 import { SUPPORT_TYPES } from '../../utils/supportTypes';
 
-const navItems = [{ to: '/industry/dashboard', label: 'Dashboard', icon: LayoutDashboard }];
+const navItems = [{ to: '/industry/dashboard', label: 'nav.dashboard', icon: LayoutDashboard }];
 
 export default function IndustryDashboard() {
   const [opportunities, setOpportunities] = useState([]);

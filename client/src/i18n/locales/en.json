@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "submitChallenge": "Submit challenge",
+    "exploreChallenges": "Explore challenges",
+    "overview": "Overview",
+    "users": "Users",
+    "universities": "Universities",
+    "industries": "Industries",
+    "challenges": "Challenges",
+    "categories": "Categories",
+    "logout": "Log out",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account, preferences, and privacy.",
+    "sections": {
+      "account": "Account",
+      "appearance": "Appearance",
+      "language": "Language",
+      "notifications": "Notifications",
+      "privacy": "Privacy & Security",
+      "accessibility": "Accessibility",
+      "help": "Help & About",
+      "danger": "Danger Zone"
+    }
+  },
+  "language": {
+    "title": "Language",
+    "description": "Choose the language used across the app. Changes apply immediately and are remembered on this device.",
+    "english": "English",
+    "hindi": "Hindi (हिन्दी)"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Control which notifications you receive in-app.",
+    "challengeUpdates": "Challenge Updates",
+    "challengeUpdatesDesc": "Approvals and assignment updates for challenges you're involved in.",
+    "projectUpdates": "Project Updates",
+    "projectUpdatesDesc": "Milestone completions and other project activity.",
+    "collaborationRequests": "Collaboration Requests",
+    "collaborationRequestsDesc": "Industry interest expressed in your projects.",
+    "systemNotifications": "System Notifications",
+    "systemNotificationsDesc": "General platform announcements.",
+    "emailNotifications": "Email Notifications",
+    "emailNotificationsDesc": "Preference is saved, but this platform does not send emails yet — nothing will be emailed until that's built.",
+    "saved": "Notification preferences updated."
+  },
+  "privacy": {
+    "title": "Privacy & Security",
+    "loginSecurityTitle": "Login security",
+    "passwordHint": "Change your password from the Account section.",
+    "logoutDevice": "Log out from this device",
+    "logoutAllDevices": "Log out of all devices",
+    "logoutAllConfirm": "This will end every active session on every device, including this one. Continue?",
+    "logoutAllSuccess": "Logged out of all devices.",
+    "privacyTitle": "Privacy",
+    "profileVisibility": "Profile visibility",
+    "profileVisibilityDesc": "Controls whether your name is shown to universities, industry, or government accounts viewing a challenge you submitted.",
+    "public": "Public — show my name",
+    "anonymous": "Anonymous — show \"Anonymous Citizen\"",
+    "showContactInfo": "Show my email to reviewers",
+        "showContactInfoDesc": "When on, your email is visible to universities/industry/government viewing your submitted challenges."
+  },
+  "accessibility": {
+    "title": "Accessibility",
+    "description": "These changes apply immediately across the whole app and are remembered on this device.",
+    "textSize": "Text size",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "xlarge": "Extra Large",
+    "reduceMotion": "Reduce motion",
+    "reduceMotionDesc": "Removes transitions and animations throughout the app.",
+    "highContrast": "High contrast",
+        "highContrastDesc": "Increases the contrast between text/borders and the background."
+  },
+  "danger": {
+    "title": "Danger Zone",
+    "deleteAccount": "Delete Account",
+    "deleteWarning": "This action cannot be undone. Your account and associated personal data will be permanently removed or anonymized according to the platform's data-handling rules.",
+    "typeToConfirm": "Type DELETE to confirm",
+    "currentPassword": "Current password",
+    "cancel": "Cancel",
+    "confirmDelete": "Delete Account",
+    "deleting": "Deleting...",
+    "success": "Your account has been deleted."
+  }
+}
