@@ -79,6 +79,7 @@ export default function ChallengeDetails() {
 
       {/* HEADER */}
       <header className="border-b border-panelLight">
+
         <div className="max-w-6xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
 
           <Link
@@ -103,12 +104,13 @@ export default function ChallengeDetails() {
           </button>
 
         </div>
+
       </header>
 
       {/* MAIN */}
       <div className="max-w-6xl mx-auto px-6 lg:px-8 py-10">
 
-        {/* TITLE SECTION */}
+        {/* TITLE */}
         <div className="mb-10">
 
           <div className="flex items-center gap-3 mb-4 flex-wrap">
@@ -151,10 +153,10 @@ export default function ChallengeDetails() {
 
         </div>
 
-        {/* CONTENT GRID */}
+        {/* CONTENT */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* LEFT SIDE */}
+          {/* LEFT */}
           <div className="lg:col-span-2 flex flex-col gap-8">
 
             {/* CITIZEN SUBMISSION */}
@@ -191,7 +193,7 @@ export default function ChallengeDetails() {
 
               </div>
 
-              {/* LOCATION + PEOPLE */}
+              {/* LOCATION / AFFECTED */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 <div className="bg-ink/30 border border-panelLight rounded-lg p-4">
@@ -230,7 +232,7 @@ export default function ChallengeDetails() {
             {challenge.media?.photos?.length > 0 && (
               <div className="bg-panel border border-panelLight rounded-xl p-6">
 
-                <div className="flex items-center gap-2 mb-6">
+                <div className="flex items-center gap-2 mb-5">
 
                   <ImageIcon
                     size={19}
@@ -252,6 +254,7 @@ export default function ChallengeDetails() {
 
                   {challenge.media.photos.map(
                     (src, index) => (
+
                       <a
                         key={src}
                         href={`${apiBase}${src}`}
@@ -275,6 +278,7 @@ export default function ChallengeDetails() {
                         </p>
 
                       </a>
+
                     )
                   )}
 
@@ -283,7 +287,7 @@ export default function ChallengeDetails() {
               </div>
             )}
 
-            {/* VIDEO */}
+            {/* VIDEOS */}
             {challenge.media?.videos?.length > 0 && (
               <div className="bg-panel border border-panelLight rounded-xl p-6">
 
@@ -295,6 +299,7 @@ export default function ChallengeDetails() {
 
                   {challenge.media.videos.map(
                     (src, index) => (
+
                       <div key={src}>
 
                         <video
@@ -308,6 +313,7 @@ export default function ChallengeDetails() {
                         </p>
 
                       </div>
+
                     )
                   )}
 
@@ -328,6 +334,7 @@ export default function ChallengeDetails() {
 
                   {challenge.media.documents.map(
                     (src, index) => (
+
                       <a
                         key={src}
                         href={`${apiBase}${src}`}
@@ -341,6 +348,7 @@ export default function ChallengeDetails() {
                         Citizen document {index + 1}
 
                       </a>
+
                     )
                   )}
 
@@ -349,7 +357,7 @@ export default function ChallengeDetails() {
               </div>
             )}
 
-            {/* MAP */}
+            {/* LOCATION */}
             {(challenge.latitude ||
               challenge.longitude) && (
               <div className="bg-panel border border-panelLight rounded-xl p-6">
@@ -394,7 +402,7 @@ export default function ChallengeDetails() {
 
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* RIGHT */}
           <div className="flex flex-col gap-8">
 
             {/* AI ANALYSIS */}
@@ -514,12 +522,14 @@ export default function ChallengeDetails() {
 
                         {challenge.aiAnalysis.keywords.map(
                           (keyword) => (
+
                             <span
                               key={keyword}
                               className="font-mono text-[11px] bg-panelLight rounded px-2 py-1 text-inkMuted"
                             >
                               {keyword}
                             </span>
+
                           )
                         )}
 
@@ -528,9 +538,9 @@ export default function ChallengeDetails() {
                     </div>
                   )}
 
-                  {/* EXPERTISE */}
-                  {challenge.aiAnalysis
-                    .requiredExpertise?.length > 0 && (
+                  {/* REQUIRED EXPERTISE */}
+                  {challenge.aiAnalysis.requiredExpertise
+                    ?.length > 0 && (
                     <div>
 
                       <p className="font-mono text-xs text-inkMuted uppercase mb-2">
@@ -541,12 +551,14 @@ export default function ChallengeDetails() {
 
                         {challenge.aiAnalysis.requiredExpertise.map(
                           (expertise) => (
+
                             <span
                               key={expertise}
                               className="font-mono text-[11px] bg-signal/10 text-signal rounded px-2 py-1"
                             >
                               {expertise}
                             </span>
+
                           )
                         )}
 
@@ -597,12 +609,14 @@ export default function ChallengeDetails() {
 
                             {r.matchedExpertise.map(
                               (expertise) => (
+
                                 <span
                                   key={expertise}
                                   className="font-mono text-[10px] bg-pulse/10 text-pulse rounded px-1.5 py-0.5"
                                 >
                                   ✓ {expertise}
                                 </span>
+
                               )
                             )}
 
@@ -637,6 +651,7 @@ export default function ChallengeDetails() {
 
                 {!challenge.project &&
                   user?.role === 'university' && (
+
                     <button
                       onClick={async () => {
 
@@ -671,6 +686,7 @@ export default function ChallengeDetails() {
                         ? 'Creating project...'
                         : 'Create project'}
                     </button>
+
                   )}
 
               </div>
@@ -692,7 +708,6 @@ export default function ChallengeDetails() {
                   Status: {challenge.project.status}
                 </p>
 
-                {/* INDUSTRY PARTNERS */}
                 {challenge.project.industryPartners
                   ?.length > 0 && (
                   <div className="pt-4 border-t border-panelLight">
@@ -703,19 +718,20 @@ export default function ChallengeDetails() {
 
                     {challenge.project.industryPartners.map(
                       (partner) => (
+
                         <p
                           key={partner.partner?._id}
                           className="text-sm text-ink50"
                         >
                           {partner.partner?.name}
                         </p>
+
                       )
                     )}
 
                   </div>
                 )}
 
-                {/* SOCIAL IMPACT */}
                 {challenge.project.socialImpact
                   ?.peopleImpacted > 0 && (
                   <div className="pt-4 border-t border-panelLight mt-4">

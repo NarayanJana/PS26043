@@ -86,7 +86,9 @@ export default function GovernmentDashboard() {
     getCategories()
       .then((res) => {
         if (res.data.categories.length > 0) {
-          setCategories(res.data.categories.map((c) => c.name));
+          setCategories(
+            res.data.categories.map((c) => c.name)
+          );
         }
       })
       .catch(() => {});
@@ -126,7 +128,6 @@ export default function GovernmentDashboard() {
     }
   };
 
-  // Open challenge details when the row is clicked
   const handleChallengeClick = (id) => {
     navigate(`/challenges/${id}`);
   };
@@ -152,7 +153,6 @@ export default function GovernmentDashboard() {
     <DashboardLayout navItems={navItems}>
       <div className="p-8 max-w-7xl">
 
-        {/* PAGE HEADER */}
         <h1 className="font-display text-2xl font-semibold text-ink50 mb-1">
           Government Analytics
         </h1>
@@ -228,8 +228,9 @@ export default function GovernmentDashboard() {
           </div>
         </form>
 
-        {/* STAT CARDS */}
+        {/* STATS */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+
           <StatCard
             label="Total challenges"
             value={stats.totalChallenges}
@@ -274,6 +275,7 @@ export default function GovernmentDashboard() {
             value={stats.citizensBenefited}
             accent="text-pulse"
           />
+
         </div>
 
         {/* AWAITING VALIDATION */}
@@ -299,14 +301,17 @@ export default function GovernmentDashboard() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
+                    if (
+                      e.key === 'Enter' ||
+                      e.key === ' '
+                    ) {
                       handleChallengeClick(c._id);
                     }
                   }}
                   className="bg-panel border border-panelLight rounded-lg px-6 py-4 flex items-center justify-between gap-4 cursor-pointer hover:border-signal hover:bg-panelLight transition-colors"
                 >
 
-                  {/* CHALLENGE INFORMATION */}
+                  {/* CHALLENGE INFO */}
                   <div className="min-w-0">
 
                     <span className="text-sm text-ink50 truncate block">
@@ -319,10 +324,12 @@ export default function GovernmentDashboard() {
 
                   </div>
 
-                  {/* RIGHT SIDE */}
+                  {/* ACTIONS */}
                   <div
                     className="flex items-center gap-3 shrink-0"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
                   >
 
                     <StatusBadge status={c.status} />
@@ -390,12 +397,14 @@ export default function GovernmentDashboard() {
           />
 
           <div className="md:col-span-2">
+
             <BarChartCard
               title="Social impact — people impacted by domain"
               data={charts.socialImpactByDomain}
               color="#2DD4BF"
               valueLabel="People impacted"
             />
+
           </div>
 
         </div>
