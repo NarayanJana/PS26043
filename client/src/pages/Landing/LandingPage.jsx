@@ -14,7 +14,8 @@ import CallToAction from './sections/CallToAction';
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-ink">
-      <Navbar />
+      <Navbar showTheme />
+
       <main>
         <Hero />
         <Mission />
@@ -27,6 +28,7 @@ export default function LandingPage() {
         <Stakeholders />
         <CallToAction />
       </main>
+
       <Footer />
     </div>
   );
