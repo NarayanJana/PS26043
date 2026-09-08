@@ -180,8 +180,8 @@ export default function DashboardLayout({ navItems, children }) {
               to={item.to}
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors ${active
-                  ? 'bg-signal/10 text-signal'
-                  : 'text-inkMuted hover:text-ink50 hover:bg-panelLight'
+                ? 'bg-signal/10 text-signal'
+                : 'text-inkMuted hover:text-ink50 hover:bg-panelLight'
                 }`}
             >
               <item.icon size={18} />
@@ -204,10 +204,10 @@ export default function DashboardLayout({ navItems, children }) {
   );
 
   return (
-    <div className="min-h-screen bg-ink flex">
+    <div className="h-screen bg-ink flex overflow-hidden">
 
       {/* Desktop sidebar */}
-      <aside className="hidden lg:flex w-64 bg-panel border-r border-panelLight flex-col shrink-0">
+      <aside className="hidden lg:flex w-64 h-full bg-panel border-r border-panelLight flex-col shrink-0 overflow-y-auto">
         {sidebarContent}
       </aside>
 
@@ -219,13 +219,13 @@ export default function DashboardLayout({ navItems, children }) {
             onClick={() => setMobileOpen(false)}
           />
 
-          <aside className="relative w-64 bg-panel border-r border-panelLight flex flex-col z-50">
+          <aside className="relative w-64 h-full bg-panel border-r border-panelLight flex flex-col z-50 overflow-y-auto">
             {sidebarContent}
           </aside>
         </div>
       )}
 
-      <main className="flex-1 overflow-y-auto min-w-0">
+      <main className="flex-1 overflow-y-auto min-w-0 h-full">
 
         {/* Top bar */}
         <div className="h-16 border-b border-panelLight flex items-center justify-between px-4 lg:px-8">

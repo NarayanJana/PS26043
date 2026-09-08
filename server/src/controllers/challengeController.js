@@ -52,11 +52,7 @@ const createChallenge = async (req, res) => {
             media,
             submittedBy: req.user._id,
         });
-        // Fire-and-forget: don't make the citizen wait for the LLM call.
-        runAnalysisForChallenge(challenge._id).catch((err) => {
-            console.error(`Background AI analysis failed for ${challenge._id}:`);
-            console.error(err);
-        });
+
         res.status(201).json({ challenge });
     } catch (error) {
         res.status(500).json({ message: error.message });

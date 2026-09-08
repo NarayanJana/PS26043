@@ -3,8 +3,9 @@ import { Link, useParams } from 'react-router-dom';
 import { GitBranch, MapPin, Users, FileText, Sparkles, RefreshCw } from 'lucide-react';
 import StatusBadge from '../../components/common/StatusBadge';
 import Timeline from '../../components/common/Timeline';
-import { getChallengeById, triggerAnalysis } from '../../services/challengeService';
+import { getChallengeById, triggerAnalysis, getSimilarChallenges } from '../../services/challengeService';
 import { createProject } from '../../services/projectService';
+import { refreshRecommendations } from '../../services/universityService';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,12 +18,21 @@ export default function ChallengeDetails() {
     const [error, setError] = useState('');
     const [analyzing, setAnalyzing] = useState(false);
     const [creatingProject, setCreatingProject] = useState(false);
+    const [refreshingRecs, setRefreshingRecs] = useState(false);
+    const [similarChallenges, setSimilarChallenges] = useState([]);
 
     useEffect(() => {
         getChallengeById(id)
             .then((res) => setChallenge(res.data.challenge))
             .catch((err) => setError(err.response?.data?.message || 'Could not load this challenge.'))
             .finally(() => setLoading(false));
+
+        // Computed live rather than trusting challenge.similarChallenges, which
+        // is only a stale snapshot from whenever THIS challenge's own analysis
+        // last ran — it never reflects challenges submitted afterward.
+        getSimilarChallenges(id)
+            .then((res) => setSimilarChallenges(res.data.similar))
+            .catch((err) => console.error(err));
     }, [id]);
 
     if (loading) {
@@ -213,21 +223,21 @@ export default function ChallengeDetails() {
                     )}
                 </div>
 
-                {challenge.similarChallenges?.length > 0 && (
+                {similarChallenges.length > 0 && (
                     <div>
                         <h2 className="font-display text-lg font-semibold text-ink50 mb-4">
                             Similar challenges
                         </h2>
                         <div className="flex flex-col gap-3">
-                            {challenge.similarChallenges.map((s) => {
+                            {similarChallenges.map((s) => {
                                 const isDuplicate = s.similarity >= 65;
                                 return (
                                     <Link
                                         key={s.challenge?._id}
                                         to={`/challenges/${s.challenge?._id}`}
                                         className={`flex items-center justify-between rounded-lg px-5 py-4 border transition-colors ${isDuplicate
-                                            ? 'bg-signal/5 border-signal/30 hover:border-signal/60'
-                                            : 'bg-panel border-panelLight hover:border-pulse/40'
+                                                ? 'bg-signal/5 border-signal/30 hover:border-signal/60'
+                                                : 'bg-panel border-panelLight hover:border-pulse/40'
                                             }`}
                                     >
                                         <div>
@@ -259,18 +269,45 @@ export default function ChallengeDetails() {
             </div>
 
             <div className="flex flex-col gap-8">
-                
+
 
                 {challenge.recommendedUniversities?.length > 0 && (
                     <div className="bg-panel border border-panelLight rounded-lg p-6">
-                        <h3 className="font-display text-sm font-semibold text-ink50 mb-4">
-                            Recommended universities
-                        </h3>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-display text-sm font-semibold text-ink50">
+                                Recommended universities
+                            </h3>
+                            {['university', 'government', 'admin'].includes(user?.role) && (
+                                <button
+                                    onClick={async () => {
+                                        setRefreshingRecs(true);
+                                        try {
+                                            const { data } = await refreshRecommendations(challenge._id);
+                                            setChallenge(data.challenge);
+                                        } catch (err) {
+                                            console.error(err);
+                                        } finally {
+                                            setRefreshingRecs(false);
+                                        }
+                                    }}
+                                    disabled={refreshingRecs}
+                                    className="text-xs text-signal hover:underline disabled:opacity-50"
+                                >
+                                    {refreshingRecs ? 'Refreshing...' : 'Refresh'}
+                                </button>
+                            )}
+                        </div>
                         <div className="flex flex-col gap-5">
-                            {challenge.recommendedUniversities.map((r) => (
-                                <div key={r.university?._id}>
+                            {challenge.recommendedUniversities.map((r, i) => (
+                                <div key={r.university?._id || i}>
                                     <div className="flex items-center justify-between mb-2">
-                                        <span className="text-sm text-ink50">{r.university?.name}</span>
+                                        <span className="text-sm text-ink50">
+                                            {r.university?.name || (
+                                                <span className="text-inkMuted italic">
+                                                    University no longer available
+                                                </span>
+                                            )}
+                                        </span>
                                         <span className="font-mono text-xs text-pulse">{r.matchScore}% Match</span>
                                     </div>
                                     {r.matchedExpertise?.length > 0 && (

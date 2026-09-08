@@ -1,6 +1,6 @@
-// Deterministic =ity scoring — the LLM extracts keywords,
-// but the actual priority number comes from this formula instead
-// of the model's own judgment (small models default to "High" too often).
+// Deterministic priority scoring — the LLM extracts keywords,
+// but the actual priority number comes from this formula
+// instead of the model's own judgment.
 
 const CRITICAL_KEYWORDS = [
   // Death / serious injury
@@ -146,36 +146,40 @@ const MODERATE_KEYWORDS = [
   'poor management',
 ];
 
-// 0–6 points based on scale of people affected (log-ish buckets,
-// since 50 vs 50,000 shouldn't be treated linearly)
+
 const peopleAffectedScore = (peopleAffected) => {
   const n = Number(peopleAffected) || 0;
+
   if (n <= 0) return 0;
   if (n < 10) return 0.5;
   if (n < 50) return 1.5;
   if (n < 200) return 2.5;
-  if (n < 1000) return 3.5;
-  if (n < 5000) return 4.5;
-  if (n < 20000) return 5.5;
-  return 6;
+  if (n < 500) return 3.5;
+  if (n < 1000) return 4.5;
+  return 5;
 };
 
 // 0–4 points based on how many severity-signal keywords appear
 const keywordScore = (keywords = [], text = '') => {
   const haystack = [...keywords, text].join(' ').toLowerCase();
 
-  let criticalHits = 0;
-  let moderateHits = 0;
+  const criticalHit = CRITICAL_KEYWORDS.some((word) =>
+    haystack.includes(word)
+  );
 
-  CRITICAL_KEYWORDS.forEach((word) => {
-    if (haystack.includes(word)) criticalHits += 1;
-  });
-  MODERATE_KEYWORDS.forEach((word) => {
-    if (haystack.includes(word)) moderateHits += 1;
-  });
+  const moderateHits = MODERATE_KEYWORDS.filter((word) =>
+    haystack.includes(word)
+  ).length;
 
-  const score = criticalHits * 1.5 + moderateHits * 0.5;
-  return Math.min(score, 4);
+  // Serious safety/health emergency
+  if (criticalHit) return 4;
+
+  // Prevent multiple similar keywords from inflating the score
+  if (moderateHits >= 3) return 2;
+  if (moderateHits === 2) return 1.5;
+  if (moderateHits === 1) return 1;
+
+  return 0;
 };
 
 const scoreToPriority = (score) => {
@@ -186,14 +190,23 @@ const scoreToPriority = (score) => {
 
 const calculatePriority = (challenge, keywords) => {
   const text = `${challenge.title} ${challenge.description}`;
+
   const pScore = peopleAffectedScore(challenge.peopleAffected);
   const kScore = keywordScore(keywords, text);
   const total = Math.min(pScore + kScore, 10);
+
+  console.log({
+    title: challenge.title,
+    peopleAffected: challenge.peopleAffected,
+    pScore,
+    kScore,
+    total,
+    keywords,
+  });
 
   return {
     score: Math.round(total * 10) / 10,
     priority: scoreToPriority(total),
   };
 };
-
 module.exports = { calculatePriority };

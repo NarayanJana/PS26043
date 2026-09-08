@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Menu, X, GitBranch, Sun, Moon } from 'lucide-react';
 import Button from './Button';
+import { setThemeMode } from '../../store/slices/themeSlice';
 
 export default function Navbar({ showTheme = false }) {
   const [open, setOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
+
+  const dispatch = useDispatch();
+  const mode = useSelector((state) => state.theme.mode);
+
+  const darkMode = mode === 'dark';
 
   const links = [
     { label: 'How it works', href: '#how-it-works' },
@@ -14,29 +20,12 @@ export default function Navbar({ showTheme = false }) {
     { label: 'Stakeholders', href: '#stakeholders' },
   ];
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-
-    if (savedTheme === 'light') {
-      setDarkMode(false);
-      document.documentElement.setAttribute('data-theme', 'light');
-    } else {
-      setDarkMode(true);
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
-  }, []);
-
   const toggleTheme = () => {
-    const newTheme = darkMode ? 'light' : 'dark';
-
-    setDarkMode(!darkMode);
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+    dispatch(setThemeMode(darkMode ? 'light' : 'dark'));
   };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-ink/90 backdrop-blur-md border-b border-panelLight">
-
       <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
 
         <Link to="/" className="flex items-center gap-2">
@@ -54,7 +43,6 @@ export default function Navbar({ showTheme = false }) {
           </span>
         </Link>
 
-        
         <nav className="hidden md:flex items-center gap-8">
           {links.map((link) => (
             <a
@@ -67,10 +55,8 @@ export default function Navbar({ showTheme = false }) {
           ))}
         </nav>
 
-        
         <div className="hidden md:flex items-center gap-3">
 
-          
           {showTheme && (
             <button
               type="button"
@@ -87,14 +73,12 @@ export default function Navbar({ showTheme = false }) {
             </button>
           )}
 
-          
           <Link to="/login">
             <Button variant="ghost">
               Log in
             </Button>
           </Link>
 
-        
           <Link to="/register">
             <Button variant="primary">
               Report a challenge
@@ -103,25 +87,21 @@ export default function Navbar({ showTheme = false }) {
 
         </div>
 
-        
         <button
           type="button"
           className="md:hidden text-ink50"
           onClick={() => setOpen(!open)}
           aria-label="Toggle menu"
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
+          {open ? <X size={22} /> : <Menu size={19} />}
         </button>
 
       </div>
 
-      
       {open && (
         <div className="md:hidden bg-panel border-t border-panelLight px-6 py-5">
-
           <div className="flex flex-col gap-4">
 
-          
             {links.map((link) => (
               <a
                 key={link.href}
@@ -133,7 +113,6 @@ export default function Navbar({ showTheme = false }) {
               </a>
             ))}
 
-          
             {showTheme && (
               <button
                 type="button"
@@ -152,7 +131,6 @@ export default function Navbar({ showTheme = false }) {
               </button>
             )}
 
-           
             <div className="flex flex-col gap-3 pt-2">
 
               <Link to="/login">
@@ -178,7 +156,6 @@ export default function Navbar({ showTheme = false }) {
           </div>
         </div>
       )}
-
     </header>
   );
 }

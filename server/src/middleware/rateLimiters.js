@@ -4,7 +4,7 @@ const rateLimit = require('express-rate-limit');
 // use and testing, tight enough to slow down credential-stuffing.
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 100,
   message: { message: 'Too many attempts. Please try again in 15 minutes.' },
   standardHeaders: true,
   legacyHeaders: false,
