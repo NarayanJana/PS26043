@@ -37,7 +37,10 @@ const app = express();
 // since origin-checking is a browser-enforced concept, not a real
 // server-side security boundary on its own — this app already relies
 // on JWTs for actual authorization.
-const allowedOrigins = [process.env.CLIENT_URL || 'http://localhost:5173'];
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.CLIENT_URL,
+].filter(Boolean);
 
 app.use(
   cors({
