@@ -18,3 +18,5 @@ export const acceptChallenge = (id) => api.post(`/challenges/${id}/accept`);
 export const rejectChallenge = (id) => api.post(`/challenges/${id}/reject`);
 
 export const deleteChallenge = (id) => api.delete(`/challenges/${id}`);
+
+export const getSimilarChallenges = (id) => api.get(`/challenges/${id}/similar`);

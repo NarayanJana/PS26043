@@ -13,36 +13,46 @@ import {
 
 import StatusBadge from '../../components/common/StatusBadge';
 import Timeline from '../../components/common/Timeline';
-
-import {
-  getChallengeById,
-  triggerAnalysis,
-} from '../../services/challengeService';
-
+import { getChallengeById, triggerAnalysis, getSimilarChallenges } from '../../services/challengeService';
 import { createProject } from '../../services/projectService';
+import { refreshRecommendations } from '../../services/universityService';
 import { useSelector } from 'react-redux';
 
 export default function ChallengeDetails() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { user } = useSelector((state) => state.auth);
+    const [challenge, setChallenge] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [analyzing, setAnalyzing] = useState(false);
+    const [creatingProject, setCreatingProject] = useState(false);
+    const [refreshingRecs, setRefreshingRecs] = useState(false);
+    const [similarChallenges, setSimilarChallenges] = useState([]);
 
-  const { user } = useSelector((state) => state.auth);
+    useEffect(() => {
+        getChallengeById(id)
+            .then((res) => setChallenge(res.data.challenge))
+            .catch((err) => setError(err.response?.data?.message || 'Could not load this challenge.'))
+            .finally(() => setLoading(false));
 
-  const [challenge, setChallenge] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [analyzing, setAnalyzing] = useState(false);
-  const [creatingProject, setCreatingProject] = useState(false);
+        // Computed live rather than trusting challenge.similarChallenges, which
+        // is only a stale snapshot from whenever THIS challenge's own analysis
+        // last ran — it never reflects challenges submitted afterward.
+        getSimilarChallenges(id)
+            .then((res) => setSimilarChallenges(res.data.similar))
+            .catch((err) => console.error(err));
+    }, [id]);
 
-  useEffect(() => {
-    getChallengeById(id)
-      .then((res) => {
-        setChallenge(res.data.challenge);
-      })
-      .catch((err) => {
-        setError(
-          err.response?.data?.message ||
-            'Could not load this challenge.'
+    if (loading) {
+        return <div className="min-h-screen bg-ink flex items-center justify-center text-inkMuted">Loading...</div>;
+    }
+
+    if (error || !challenge) {
+        return (
+            <div className="min-h-screen bg-ink flex items-center justify-center text-red-400">
+                {error || 'Challenge not found.'}
+            </div>
         );
       })
       .finally(() => {
@@ -224,53 +234,40 @@ export default function ChallengeDetails() {
 
                 </div>
 
-              </div>
-
-            </div>
-
-            {/* CITIZEN PHOTOS */}
-            {challenge.media?.photos?.length > 0 && (
-              <div className="bg-panel border border-panelLight rounded-xl p-6">
-
-                <div className="flex items-center gap-2 mb-5">
-
-                  <ImageIcon
-                    size={19}
-                    className="text-signal"
-                  />
-
-                  <h2 className="font-display text-lg font-semibold text-ink50">
-                    Citizen Evidence
-                  </h2>
-
-                </div>
-
-                <p className="text-sm text-inkMuted mb-5">
-                  Photos uploaded by the citizen as evidence
-                  of the reported problem.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                  {challenge.media.photos.map(
-                    (src, index) => (
-
-                      <a
-                        key={src}
-                        href={`${apiBase}${src}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group block"
-                      >
-
-                        <div className="overflow-hidden rounded-lg border border-panelLight bg-ink">
-
-                          <img
-                            src={`${apiBase}${src}`}
-                            alt={`Citizen evidence ${index + 1}`}
-                            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-
+                {similarChallenges.length > 0 && (
+                    <div>
+                        <h2 className="font-display text-lg font-semibold text-ink50 mb-4">
+                            Similar challenges
+                        </h2>
+                        <div className="flex flex-col gap-3">
+                            {similarChallenges.map((s) => {
+                                const isDuplicate = s.similarity >= 65;
+                                return (
+                                    <Link
+                                        key={s.challenge?._id}
+                                        to={`/challenges/${s.challenge?._id}`}
+                                        className={`flex items-center justify-between rounded-lg px-5 py-4 border transition-colors ${isDuplicate
+                                                ? 'bg-signal/5 border-signal/30 hover:border-signal/60'
+                                                : 'bg-panel border-panelLight hover:border-pulse/40'
+                                            }`}
+                                    >
+                                        <div>
+                                            {isDuplicate && (
+                                                <p className="font-mono text-[10px] uppercase text-signal mb-1">
+                                                    Potential duplicate
+                                                </p>
+                                            )}
+                                            <span className="text-sm text-ink50">{s.challenge?.title}</span>
+                                        </div>
+                                        <span
+                                            className={`font-mono text-xs ${isDuplicate ? 'text-signal' : 'text-pulse'
+                                                }`}
+                                        >
+                                            Similarity: {Math.round(s.similarity)}%
+                                        </span>
+                                    </Link>
+                                );
+                            })}
                         </div>
 
                         <p className="text-xs text-inkMuted mt-2">
@@ -400,97 +397,63 @@ export default function ChallengeDetails() {
 
             </div>
 
-          </div>
+            <div className="flex flex-col gap-8">
 
-          {/* RIGHT */}
-          <div className="flex flex-col gap-8">
 
-            {/* AI ANALYSIS */}
-            <div className="bg-panel border border-panelLight rounded-xl p-6">
-
-              <h2 className="font-display text-lg font-semibold text-ink50 mb-5 flex items-center gap-2">
-
-                <Sparkles
-                  size={19}
-                  className="text-signal"
-                />
-
-                AI Analysis
-
-              </h2>
-
-              {!hasAiAnalysis ? (
-
-                <div>
-
-                  <p className="text-sm text-inkMuted leading-6 mb-5">
-                    This challenge has not been analyzed yet.
-                    AI analysis provides a summary, priority,
-                    keywords and required expertise.
-                  </p>
-
-                  <button
-                    onClick={async () => {
-
-                      setAnalyzing(true);
-
-                      try {
-
-                        const { data } =
-                          await triggerAnalysis(id);
-
-                        setChallenge(data.challenge);
-
-                      } catch (err) {
-
-                        console.error(err);
-
-                      } finally {
-
-                        setAnalyzing(false);
-
-                      }
-
-                    }}
-                    className="flex items-center gap-2 text-sm text-signal hover:underline"
-                    disabled={analyzing}
-                  >
-
-                    <RefreshCw
-                      size={14}
-                      className={
-                        analyzing
-                          ? 'animate-spin'
-                          : ''
-                      }
-                    />
-
-                    {analyzing
-                      ? 'Analyzing...'
-                      : 'Run AI analysis now'}
-
-                  </button>
-
-                </div>
-
-              ) : (
-
-                <div className="flex flex-col gap-5">
-
-                  {/* SUMMARY */}
-                  <div>
-
-                    <p className="font-mono text-xs text-inkMuted uppercase mb-2">
-                      AI Summary
-                    </p>
-
-                    <div className="bg-ink/30 border border-panelLight rounded-lg p-4">
-
-                      <p className="text-sm text-ink50 leading-6">
-                        {challenge.aiAnalysis.summary ||
-                          'No summary available.'}
-                      </p>
-
+                {challenge.recommendedUniversities?.length > 0 && (
+                    <div className="bg-panel border border-panelLight rounded-lg p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="font-display text-sm font-semibold text-ink50">
+                                Recommended universities
+                            </h3>
+                            {['university', 'government', 'admin'].includes(user?.role) && (
+                                <button
+                                    onClick={async () => {
+                                        setRefreshingRecs(true);
+                                        try {
+                                            const { data } = await refreshRecommendations(challenge._id);
+                                            setChallenge(data.challenge);
+                                        } catch (err) {
+                                            console.error(err);
+                                        } finally {
+                                            setRefreshingRecs(false);
+                                        }
+                                    }}
+                                    disabled={refreshingRecs}
+                                    className="text-xs text-signal hover:underline disabled:opacity-50"
+                                >
+                                    {refreshingRecs ? 'Refreshing...' : 'Refresh'}
+                                </button>
+                            )}
+                        </div>
+                        <div className="flex flex-col gap-5">
+                            {challenge.recommendedUniversities.map((r, i) => (
+                                <div key={r.university?._id || i}>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm text-ink50">
+                                            {r.university?.name || (
+                                                <span className="text-inkMuted italic">
+                                                    University no longer available
+                                                </span>
+                                            )}
+                                        </span>
+                                        <span className="font-mono text-xs text-pulse">{r.matchScore}% Match</span>
+                                    </div>
+                                    {r.matchedExpertise?.length > 0 && (
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {r.matchedExpertise.map((e) => (
+                                                <span
+                                                    key={e}
+                                                    className="font-mono text-[10px] bg-pulse/10 text-pulse rounded px-1.5 py-0.5"
+                                                >
+                                                    ✓ {e}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
                   </div>

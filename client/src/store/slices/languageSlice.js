@@ -1,23 +1,53 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const savedLanguage = localStorage.getItem('appLanguage');
+const getCurrentUser = () => {
+  try {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  } catch {
+    return null;
+  }
+};
 
-// Same pattern as themeSlice — a device-level preference, not tied to
-// the logged-in account, so it survives logout/login on this browser.
+const getLanguageKey = () => {
+  const user = getCurrentUser();
+
+  if (!user) {
+    return 'appLanguage_guest';
+  }
+
+  const userId = user._id || user.id || user.email;
+
+  return `appLanguage_${userId}`;
+};
+
+const getSavedLanguage = () => {
+  return localStorage.getItem(getLanguageKey()) || 'en';
+};
+
 const initialState = {
-  language: savedLanguage || 'en',
+  language: getSavedLanguage(),
 };
 
 const languageSlice = createSlice({
   name: 'language',
+
   initialState,
+
   reducers: {
     setLanguage: (state, action) => {
       state.language = action.payload;
-      localStorage.setItem('appLanguage', action.payload);
+
+      const key = getLanguageKey();
+      localStorage.setItem(key, action.payload);
+    },
+
+    resetLanguage: (state) => {
+      state.language = 'en';
     },
   },
 });
 
-export const { setLanguage } = languageSlice.actions;
+export const { setLanguage, resetLanguage } = languageSlice.actions;
+
 export default languageSlice.reducer;
